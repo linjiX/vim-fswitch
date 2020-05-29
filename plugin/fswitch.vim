@@ -34,24 +34,6 @@ let s:os_slash = &ssl == 0 && (has("win16") || has("win32") || has("win64")) ? '
 let s:fswitch_global_locs = '.' . s:os_slash
 
 "
-" s:SetVariables
-"
-" There are two variables that need to be set in the buffer in order for things
-" to work correctly.  Because we're using an autocmd to set things up we need to
-" be sure that the user hasn't already set them for us explicitly so we have
-" this function just to check and make sure.  If the user's autocmd runs after
-" ours then they will override the value anyway.
-"
-function! s:SetVariables(dst, locs)
-    if !exists("b:fswitchdst")
-        let b:fswitchdst = a:dst
-    endif
-    if !exists("b:fswitchlocs")
-        let b:fswitchlocs = a:locs
-    endif
-endfunction
-
-"
 " s:FSGetLocations
 "
 " Return the list of possible locations
@@ -329,24 +311,6 @@ function! FSwitch(filename, precmd)
         echoerr "No alternate file found.  'fsnonewfiles' is set which denies creation."
     endif
 endfunction
-
-"
-" The autocmds we set up to set up the buffer variables for us.
-"
-augroup fswitch_au_group
-    au!
-    au BufEnter *.c    call s:SetVariables('h',       'reg:/src/include/,reg:|src|include/**|,ifrel:|/src/|../include|')
-    au BufEnter *.cc   call s:SetVariables('hh',      'reg:/src/include/,reg:|src|include/**|,ifrel:|/src/|../include|')
-    au BufEnter *.cpp  call s:SetVariables('hpp,h',   'reg:/src/include/,reg:|src|include/**|,ifrel:|/src/|../include|')
-    au BufEnter *.cxx  call s:SetVariables('hxx',     'reg:/src/include/,reg:|src|include/**|,ifrel:|/src/|../include|')
-    au BufEnter *.C    call s:SetVariables('H',       'reg:/src/include/,reg:|src|include/**|,ifrel:|/src/|../include|')
-    au BufEnter *.m    call s:SetVariables('h',       'reg:/src/include/,reg:|src|include/**|,ifrel:|/src/|../include|')
-    au BufEnter *.h    call s:SetVariables('c,cpp,m', 'reg:/include/src/,reg:/include.*/src/,ifrel:|/include/|../src|')
-    au BufEnter *.hh   call s:SetVariables('cc',      'reg:/include/src/,reg:/include.*/src/,ifrel:|/include/|../src|')
-    au BufEnter *.hpp  call s:SetVariables('cpp',     'reg:/include/src/,reg:/include.*/src/,ifrel:|/include/|../src|')
-    au BufEnter *.hxx  call s:SetVariables('cxx',     'reg:/include/src/,reg:/include.*/src/,ifrel:|/include/|../src|')
-    au BufEnter *.H    call s:SetVariables('C',       'reg:/include/src/,reg:/include.*/src/,ifrel:|/include/|../src|')
-augroup END
 
 "
 " The mappings used to do the good work
